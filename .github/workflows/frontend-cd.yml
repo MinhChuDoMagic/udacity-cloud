@@ -84,18 +84,22 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }} # Use your stored AWS Access Key ID
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }} # Use your stored AWS Secret Access Key
+          aws-region: ${{ vars.AWS_REGION }} # Use the region from your environment variables
+
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
 
       - name: Build, tag, and push Docker image
         run: |
-          docker tag frontend:latest ${{ vars.FRONTEND_ECR_REGISTRY }}:${{ github.sha }}
+          docker build -t ${{ vars.FRONTEND_ECR_REGISTRY }}:${{ github.sha }} .
           docker push ${{ vars.FRONTEND_ECR_REGISTRY }}:${{ github.sha }}
+        working-directory: ./starter/frontend
 
   deploy:
     runs-on: ubuntu-latest
