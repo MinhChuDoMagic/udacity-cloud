@@ -103,12 +103,13 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }} # Use your stored AWS Access Key ID
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }} # Use your stored AWS Secret Access Key
           aws-region: ${{ vars.AWS_REGION }} # Use the region from your environment variables
-          
+
       - name: Configure kubectl
         run: |
           aws eks --region ${{ vars.AWS_REGION }} update-kubeconfig --name ${{ vars.EKS_CLUSTER_NAME }}
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl set image deployment/backend backend=${{ vars.BACKEND_ECR_REGISTRY }}:${{ github.sha }}
-          kubectl rollout status deployment/backend
+          kustomize edit set image backend==${{ vars.FRONTEND_ECR_REGISTRY }}:${{ github.sha }}
+          kustomize build | kubectl apply -f -
+        working-directory: ./starter/backend/k8s

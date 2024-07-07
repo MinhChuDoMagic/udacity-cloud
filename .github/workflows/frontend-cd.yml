@@ -120,5 +120,6 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl set image deployment/frontend frontend=${{ vars.FRONTEND_ECR_REGISTRY }}:${{ github.sha }}
-          kubectl rollout status deployment/frontend
+          kustomize edit set image frontend=${{ vars.FRONTEND_ECR_REGISTRY }}:${{ github.sha }}
+          kustomize build | kubectl apply -f -
+        working-directory: ./starter/frontend/k8s
