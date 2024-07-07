@@ -77,7 +77,7 @@ jobs:
       - run: npm run build -- --build-args REACT_APP_MOVIE_API_URL=${{ env.REACT_APP_MOVIE_API_URL }}
         working-directory: starter/frontend
 
-      - run: docker build -t frontend:latest --build-arg REACT_APP_MOVIE_API_URL=${{ enf.REACT_APP_MOVIE_API_URL }} ./starter/frontend
+      - run: docker build -t frontend:latest --build-arg REACT_APP_MOVIE_API_URL=${{ env.REACT_APP_MOVIE_API_URL }} ./starter/frontend
 
   push_to_ecr:
     runs-on: ubuntu-latest
